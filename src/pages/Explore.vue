@@ -4,12 +4,14 @@ import { Screen, type EventData, type View } from '@nativescript/core'
 import { useNavigationFocus, usePageState, useRouter } from 'vue-router-ns'
 import { categories, staySections, type Category } from '../data'
 import { usePageScroll } from '../utils/page-scroll'
+import { provideStayActions } from '../utils/stay-actions'
 import { matchingStays, staysForSection } from '../utils/stays'
 import { search, defaultSearch, type SearchFilters } from '../store'
 import ExploreHeader from '../components/ExploreHeader.vue'
 import DestinationCarousel from '../components/DestinationCarousel.vue'
 
 const router = useRouter()
+provideStayActions()
 const category = ref<Category>('all')
 const readingPosition = usePageScroll()
 const focus = useNavigationFocus({ return: 'search-button' })

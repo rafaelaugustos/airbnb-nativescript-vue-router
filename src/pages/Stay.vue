@@ -10,6 +10,7 @@ import {
 } from '@nativescript/core'
 import { stayData } from '../stay-data'
 import { usePageScroll } from '../utils/page-scroll'
+import { provideStayActions } from '../utils/stay-actions'
 import { stayTotal } from '../utils/stays'
 import StayGallery from '../components/StayGallery.vue'
 import StaySummary from '../components/StaySummary.vue'
@@ -17,6 +18,7 @@ import StayDetails from '../components/StayDetails.vue'
 import BookingBar from '../components/BookingBar.vue'
 
 const router = useRouter()
+provideStayActions()
 const details = useRouteData(stayData)
 const { data: stay, status } = details
 const readingPosition = usePageScroll()

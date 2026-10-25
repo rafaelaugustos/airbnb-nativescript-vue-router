@@ -6,9 +6,11 @@ import { matchingStays, staysForSection } from '../utils/stays'
 import { search } from '../store'
 import StayCard from '../components/StayCard.vue'
 import { usePageScroll } from '../utils/page-scroll'
+import { provideStayActions } from '../utils/stay-actions'
 
 const props = defineProps<{ id: string }>()
 const router = useRouter()
+provideStayActions()
 const readingPosition = usePageScroll()
 const section = computed(() => staySections.find((item) => item.id === props.id))
 const listings = computed(() => {

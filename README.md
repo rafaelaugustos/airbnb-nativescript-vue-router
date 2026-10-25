@@ -6,7 +6,7 @@ An Airbnb-inspired app built with NativeScript-Vue and [vue-router-ns](https://g
 
 [![NativeScript](https://img.shields.io/badge/NativeScript-9.1-65ADF1?logo=nativescript&logoColor=white)](https://nativescript.org)
 [![Vue](https://img.shields.io/badge/NativeScript--Vue-3.1-42B883?logo=vuedotjs&logoColor=white)](https://nativescript-vue.org)
-[![vue-router-ns](https://img.shields.io/badge/vue--router--ns-0.1.0--rc.2-FF385C)](https://github.com/rafaelaugustos/vue-router-ns)
+[![vue-router-ns](https://img.shields.io/badge/vue--router--ns-0.1.0--rc.4-FF385C)](https://github.com/rafaelaugustos/vue-router-ns)
 
 <a href=".github/media/airbnb.mp4"><img src=".github/media/airbnb.gif" width="280" alt="A stay opens from its card with native iOS zoom, hides the tab bar, and returns to the feed with a dismissal gesture"></a>
 
@@ -16,7 +16,7 @@ An Airbnb-inspired app built with NativeScript-Vue and [vue-router-ns](https://g
 
 This app puts my router, [vue-router-ns](https://github.com/rafaelaugustos/vue-router-ns), to work in a complete browsing flow: discover stays, preview a listing, save favorites, filter destinations and open details. The screens use native views and each tab has its own navigation stack.
 
-The source is included here as a standalone project. It installs `vue-router-ns@0.1.0-rc.2` from npm; no checkout of the router repository is needed.
+The source is included here as a standalone project. It installs `vue-router-ns@0.1.0-rc.4` from npm; no checkout of the router repository is needed.
 
 ## Run it
 
@@ -41,6 +41,7 @@ For a physical iOS device, configure your signing team in `App_Resources/iOS/bui
 - Listing details with a photo gallery, host information, amenities and a fixed reservation bar. The tab bar hides while details are open on supported hosts.
 - Native card-to-page zoom and gesture dismissal on supported iOS 18+ runtimes; shared-image transitions as the fallback, including Android.
 - Long-press cards for a native iOS preview and favorite action. Android presents a popup menu.
+- Shared favorite actions for card buttons and menus, also used by the detail gallery. Titles and availability stay reactive, and the router checks the owning page before dispatching.
 - A search sheet that returns destination and price filters. Cancelling keeps the previous filters.
 - Favorites, applied filters and the selected tab saved locally.
 - Navigation snapshots and opted-in page state: vertical reading positions, the selected category and gallery photo.
@@ -57,6 +58,7 @@ The catalog is offline. Listings are fictional, the reservation button shows a d
 | Full-screen listing details              | `meta.tabBarVisibility: 'hidden'`                    | [router.ts](src/router.ts)                                                                 |
 | Card zoom and shared-image fallback      | `RouterLink zoom`, NativeScript `SharedTransition`   | [StayCard.vue](src/components/StayCard.vue)                                                |
 | Preview and favorite actions             | `RouterLink menu`                                    | [StayPreview.vue](src/components/StayPreview.vue)                                          |
+| Shared favorite state and dispatch       | `usePageActions`, `actions.menu()`, `actions.dispatch()` | [stay-actions.ts](src/utils/stay-actions.ts), [StayCard.vue](src/components/StayCard.vue), [StayGallery.vue](src/components/StayGallery.vue) |
 | Search sheet with a typed result         | `pushForResult<SearchFilters>()`, `back({ result })` | [Explore.vue](src/pages/Explore.vue), [Search.vue](src/pages/Search.vue)                   |
 | Per-entry loading, error and retry       | Experimental `defineRouteLoader`, `useRouteData`     | [stay-data.ts](src/stay-data.ts), [Stay.vue](src/pages/Stay.vue)                           |
 | Render details after navigation          | `Deferred`                                           | [Stay.vue](src/pages/Stay.vue)                                                             |
@@ -64,7 +66,7 @@ The catalog is offline. Listings are fictional, the reservation button shows a d
 | Accessibility focus and modal return     | `useNavigationFocus`                                 | [Explore.vue](src/pages/Explore.vue), [Search.vue](src/pages/Search.vue)                   |
 | Open links in the owning tab             | `links.frame`                                        | [router.ts](src/router.ts)                                                                 |
 
-The rc.2 update removes the earlier native tab-styling workaround and enables `backToRootOnReselect` after the UIKit duplicate-selection fix. Tab visibility now comes from route metadata.
+Favorite buttons and context menus use the page-action API introduced in rc.3. Each routed page provides a registry keyed by listing ID, while saved listings remain in the shared app store. Registering during page setup also covers cards added later by filters or favorites and galleries mounted after a loader resolves. The router blocks dispatch from covered or inactive pages and during pending navigation, and prevents overlapping execution within a registry. Card previews rebind when the listing changes. rc.4 keeps the same navigation runtime and API as rc.3.
 
 ## Project layout
 
@@ -79,7 +81,7 @@ src/
   data.ts                 Fictional catalog
   pages/                  Explore, details, favorites and search
   components/             Cards, previews, gallery and reservation bar
-  utils/                  Filtering, prices and saved scroll position
+  utils/                  Filtering, prices, page actions and saved scroll position
   assets/                 Bundled photos
   fonts/                  Material Icons and license
 App_Resources/            iOS and Android native configuration and icons
@@ -112,6 +114,8 @@ npm run bundle:android
 npm run build:ios       # simulator build
 npm run build:android   # debug APK
 ```
+
+The rc.4 integration was checked with TypeScript, both platform bundles and an iOS simulator build. On the iPhone 17 / iOS 26 simulator, favorite actions were exercised through card buttons, the native context menu, listing details and destination pages, including category changes and removing/recreating cards in the Favorites tab. Android received bundle validation for this update; these interaction checks were run on iOS.
 
 The video was recorded on an iPhone 17 / iOS 26 simulator with NativeScript Core 9.1.3, NativeScript-Vue 3.1.2 and vue-router-ns 0.1.0-rc.2. It shows native tabs, zoom and gesture return, context previews, favorite actions and scrolling. It is edited to 26.5 seconds without speeding up the animations.
 

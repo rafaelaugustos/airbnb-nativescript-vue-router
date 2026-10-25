@@ -5,6 +5,8 @@ import { stays } from '../data'
 import { saved } from '../store'
 import StayCard from '../components/StayCard.vue'
 import { usePageScroll } from '../utils/page-scroll'
+import { provideStayActions } from '../utils/stay-actions'
+provideStayActions()
 const readingPosition = usePageScroll()
 const router = useRouter()
 const favorites = computed(() => stays.filter((stay) => saved.value.includes(stay.id)))

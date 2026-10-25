@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { PageTransition, SharedTransition } from '@nativescript/core'
+import { computed } from 'nativescript-vue'
 import { RouterLink, type RouteMenuOptions } from 'vue-router-ns'
 import type { Stay } from '../data'
 import { money, stayTotal } from '../utils/stays'
-import { saved, toggleSaved } from '../store'
+import { useStayActions } from '../utils/stay-actions'
 import StayPreview from './StayPreview.vue'
 const props = withDefaults(
   defineProps<{ stay: Stay; compact?: boolean; cardWidth?: number }>(),
@@ -13,23 +14,16 @@ const props = withDefaults(
   },
 )
 const transition = SharedTransition.custom(new PageTransition())
-const menu: RouteMenuOptions = {
+const { actions, favorite, isSaved } = useStayActions(() => props.stay.id)
+// Rebind the native preview if this card receives a different listing.
+// Favorite state stays live without replacing an open menu's options.
+const menu = computed<RouteMenuOptions>(() => ({
   preview: StayPreview,
   props: { stay: props.stay },
   size: { width: 320, height: 350 },
   openTitle: 'Ver acomodação',
-  actions: [
-    {
-      get title() {
-        return saved.value.includes(props.stay.id)
-          ? 'Remover dos favoritos'
-          : 'Salvar nos favoritos'
-      },
-      image: 'heart',
-      run: () => toggleSaved(props.stay.id),
-    },
-  ],
-}
+  actions: actions.menu([props.stay.id]),
+}))
 </script>
 
 <template>
@@ -71,7 +65,7 @@ const menu: RouteMenuOptions = {
           v-if="compact"
           class="icon"
           text="&#xe87d;"
-          :color="saved.includes(stay.id) ? '#ff385c' : '#66000000'"
+          :color="isSaved ? '#ff385c' : '#66000000'"
           fontSize="25"
           textAlignment="center"
           verticalAlignment="middle"
@@ -79,12 +73,11 @@ const menu: RouteMenuOptions = {
         />
         <Button
           class="icon heart-button"
-          :text="compact ? '\ue87e' : saved.includes(stay.id) ? '\ue87d' : '\ue87e'"
-          :color="compact ? '#ffffff' : saved.includes(stay.id) ? '#ff385c' : '#222222'"
-          :accessibilityLabel="
-            saved.includes(stay.id) ? 'Remover dos favoritos' : 'Salvar nos favoritos'
-          "
-          @tap="toggleSaved(stay.id)"
+          :text="compact ? '\ue87e' : isSaved ? '\ue87d' : '\ue87e'"
+          :color="compact ? '#ffffff' : isSaved ? '#ff385c' : '#222222'"
+          :accessibilityLabel="favorite.title"
+          :isEnabled="favorite.enabled"
+          @tap="actions.dispatch(stay.id)"
         />
       </GridLayout>
     </GridLayout>

@@ -2,10 +2,11 @@
 import { computed, ref } from 'nativescript-vue'
 import { usePageState } from 'vue-router-ns'
 import { interior, type Stay } from '../data'
-import { saved, toggleSaved } from '../store'
+import { useStayActions } from '../utils/stay-actions'
 
 const props = defineProps<{ stay: Stay; height: number; topInset: number }>()
 const emit = defineEmits<{ back: [] }>()
+const { actions, favorite, isSaved } = useStayActions(() => props.stay.id)
 const photo = ref(0)
 const photos = computed(() => [props.stay.image, interior])
 usePageState('gallery', {
@@ -46,15 +47,14 @@ function nextPhoto() {
     />
     <Button
       class="icon round-button"
-      :text="saved.includes(stay.id) ? '\ue87d' : '\ue87e'"
-      :color="saved.includes(stay.id) ? '#ff385c' : '#222222'"
+      :text="isSaved ? '\ue87d' : '\ue87e'"
+      :color="isSaved ? '#ff385c' : '#222222'"
       horizontalAlignment="right"
       verticalAlignment="top"
       :marginTop="topInset + 8"
-      :accessibilityLabel="
-        saved.includes(stay.id) ? 'Remover dos favoritos' : 'Salvar nos favoritos'
-      "
-      @tap="toggleSaved(stay.id)"
+      :accessibilityLabel="favorite.title"
+      :isEnabled="favorite.enabled"
+      @tap="actions.dispatch(stay.id)"
     />
     <Button
       class="photo-count"
