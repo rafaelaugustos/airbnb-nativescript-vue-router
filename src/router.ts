@@ -1,9 +1,13 @@
 import { createRouter } from 'vue-router-ns'
 import { stayData } from './stay-data'
 import { navigationState } from './navigation-state'
+import { session } from './travel-state'
 
 export const router = createRouter({
   restore: navigationState,
+  diagnostics: { maxEvents: 250, recording: { maxRecords: 400, maxBytes: 512 * 1024 } },
+  preload: { concurrency: 2, maxEntries: 8, ttl: 30_000 },
+  preloadData: { concurrency: 2, maxEntries: 8, ttl: 30_000 },
   links: {
     schemes: ['airbnbns'],
     frame: (location) => {
@@ -27,19 +31,55 @@ export const router = createRouter({
     { path: '/saved', component: () => import('./pages/Saved.vue') },
     {
       path: '/trips',
-      props: { section: 'trips' },
-      component: () => import('./pages/Collection.vue'),
+      component: () => import('./pages/Trips.vue'),
+      children: [
+        {
+          path: ':id',
+          component: () => import('./pages/Trip.vue'),
+          meta: { requiresSession: true, tabBarVisibility: 'hidden' },
+          children: [
+            { path: 'edit', component: () => import('./pages/TripEditor.vue') },
+            { path: 'reserve', component: () => import('./pages/TripEditor.vue') },
+          ],
+        },
+      ],
     },
     {
       path: '/messages',
-      props: { section: 'messages' },
-      component: () => import('./pages/Collection.vue'),
+      component: () => import('./pages/Messages.vue'),
+      children: [
+        {
+          path: ':id',
+          component: () => import('./pages/Conversation.vue'),
+          meta: { requiresSession: true, tabBarVisibility: 'hidden' },
+        },
+      ],
     },
     {
       path: '/profile',
-      props: { section: 'profile' },
-      component: () => import('./pages/Collection.vue'),
+      component: () => import('./pages/Profile.vue'),
+      children: [
+        {
+          path: 'diagnostics',
+          component: () => import('./pages/Diagnostics.vue'),
+          meta: { tabBarVisibility: 'hidden' },
+        },
+      ],
     },
     { path: '/search', modal: true, component: () => import('./pages/Search.vue') },
+    {
+      path: '/login',
+      modal: {
+        ios: { detents: ['large'], grabber: true },
+        android: { sheet: { state: 'expanded', skipCollapsed: true } },
+      },
+      component: () => import('./pages/Login.vue'),
+    },
+    { path: '/guests', modal: true, component: () => import('./pages/Guests.vue') },
   ],
+})
+
+router.beforeEach((to) => {
+  if (to.meta.requiresSession && !session.value)
+    return { path: '/login', query: { next: to.fullPath } }
 })

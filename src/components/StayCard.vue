@@ -1,7 +1,19 @@
 <script setup lang="ts">
-import { PageTransition, SharedTransition } from '@nativescript/core'
-import { computed } from 'nativescript-vue'
-import { RouterLink, type RouteMenuOptions } from 'vue-router-ns'
+import {
+  PageTransition,
+  SharedTransition,
+  type TouchGestureEventData,
+} from '@nativescript/core'
+import { computed, onUnmounted } from 'nativescript-vue'
+import {
+  RouterLink,
+  useRoutePreload,
+  useRouteDataPreload,
+  type RoutePreload,
+  type RouteMenuOptions,
+} from 'vue-router-ns'
+import { stayData } from '../stay-data'
+import { preparationEnabled } from '../travel-state'
 import type { Stay } from '../data'
 import { money, stayTotal } from '../utils/stays'
 import { useStayActions } from '../utils/stay-actions'
@@ -14,6 +26,32 @@ const props = withDefaults(
   },
 )
 const transition = SharedTransition.custom(new PageTransition())
+const prepareCode = useRoutePreload()
+const prepareData = useRouteDataPreload()
+let leases: RoutePreload[] = []
+let releaseTimer: ReturnType<typeof setTimeout> | undefined
+let origin = { x: 0, y: 0 }
+function releasePreparation() {
+  clearTimeout(releaseTimer)
+  leases.forEach((lease) => lease.cancel())
+  leases = []
+}
+function prepare(event: TouchGestureEventData) {
+  if (event.action === 'down') {
+    releasePreparation()
+    if (!preparationEnabled.value) return
+    origin = { x: event.getX(), y: event.getY() }
+    const to = `/stays/${props.stay.id}`
+    leases = [prepareCode(to), prepareData(to, stayData)]
+  } else if (
+    event.action === 'cancel' ||
+    (event.action === 'move' &&
+      Math.hypot(event.getX() - origin.x, event.getY() - origin.y) > 18)
+  )
+    releasePreparation()
+  else if (event.action === 'up') releaseTimer = setTimeout(releasePreparation, 1500)
+}
+onUnmounted(releasePreparation)
 const { actions, favorite, isSaved } = useStayActions(() => props.stay.id)
 // Rebind the native preview if this card receives a different listing.
 // Favorite state stays live without replacing an open menu's options.
@@ -39,6 +77,7 @@ const menu = computed<RouteMenuOptions>(() => ({
           :accessibilityLabel="`Ver ${stay.title}, ${stay.location}`"
           accessible="true"
           accessibilityRole="button"
+          @touch="prepare"
         >
           <Image
             :src="stay.image"

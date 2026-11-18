@@ -86,3 +86,175 @@ Button {
   font-weight: 600;
   height: 50;
 }
+.journey-header {
+  padding: 14 20;
+  background-color: #ffffff;
+}
+.header-title {
+  font-size: 16;
+  font-weight: 600;
+}
+.body-copy {
+  color: #717171;
+  font-size: 15;
+  line-height: 5;
+}
+.eyebrow {
+  color: #717171;
+  font-size: 10;
+  font-weight: 700;
+  letter-spacing: 0.12;
+}
+.journey-card {
+  border-radius: 22;
+  border-width: 1;
+  border-color: #e9e7e5;
+  margin-bottom: 22;
+  background-color: #ffffff;
+}
+.status-tag {
+  color: #16816a;
+  font-size: 10;
+  font-weight: 700;
+  letter-spacing: 0.09;
+}
+.details-box {
+  padding: 22;
+  border-radius: 16;
+  background-color: #f7f6f3;
+  margin-top: 24;
+  margin-bottom: 12;
+}
+.line-item {
+  padding: 20 0;
+  border-bottom-width: 1;
+  border-bottom-color: #eeeeee;
+}
+.avatar {
+  width: 44;
+  height: 44;
+  padding-top: 12;
+  border-radius: 22;
+  color: #714d3b;
+  background-color: #f5e4d8;
+  font-size: 15;
+  font-weight: 700;
+  text-align: center;
+}
+.host-card {
+  padding: 20 0;
+}
+.outline-button {
+  height: 48;
+  border-width: 1;
+  border-color: #222222;
+  border-radius: 12;
+  font-size: 14;
+  font-weight: 600;
+  background-color: #ffffff;
+  margin-top: 18;
+}
+.bottom-actions {
+  padding: 16 24;
+  border-top-width: 1;
+  border-top-color: #eeeeee;
+  background-color: #ffffff;
+}
+.form-field {
+  border-width: 1;
+  border-color: #b0b0b0;
+  border-radius: 12;
+  padding: 16;
+  font-size: 16;
+  color: #222222;
+  placeholder-color: #929292;
+  background-color: #ffffff;
+}
+.login-mark {
+  font-size: 54;
+  color: #ff385c;
+  margin-top: 44;
+  margin-bottom: 28;
+}
+.counter-button {
+  width: 40;
+  height: 40;
+  border-radius: 20;
+  border-width: 1;
+  border-color: #b0b0b0;
+  font-size: 22;
+  background-color: #ffffff;
+}
+.mini-stay {
+  padding: 16;
+  border-radius: 18;
+  background-color: #f7f6f3;
+}
+.date-choice {
+  height: 46;
+  border-radius: 10;
+  border-width: 1;
+  border-color: #dddddd;
+  margin-top: 10;
+  font-size: 14;
+  background-color: #ffffff;
+}
+.date-choice.selected {
+  border-color: #222222;
+  border-width: 2;
+  background-color: #f7f6f3;
+  font-weight: 600;
+}
+.invitation-card {
+  padding: 22;
+  border-radius: 22;
+  background-color: #fff3f1;
+}
+.message-row {
+  padding: 22 0;
+  border-bottom-width: 1;
+  border-bottom-color: #eeeeee;
+}
+.chat-bubble {
+  padding: 17;
+  border-radius: 18;
+  margin-top: 12;
+  font-size: 15;
+  line-height: 4;
+}
+.incoming {
+  background-color: #f4f4f4;
+  margin-right: 38;
+}
+.outgoing {
+  background-color: #ffe9ee;
+  margin-left: 38;
+}
+.message-input {
+  border-width: 1;
+  border-color: #dddddd;
+  border-radius: 24;
+  padding: 12 16;
+  font-size: 14;
+}
+.profile-card {
+  padding: 28;
+  border-width: 1;
+  border-color: #eeeeee;
+  border-radius: 22;
+}
+.profile-avatar {
+  width: 82;
+  height: 82;
+  border-radius: 41;
+  padding-top: 22;
+  font-size: 28;
+  horizontal-align: center;
+}
+.record-detail {
+  padding: 16;
+  background-color: #f7f6f3;
+  border-radius: 12;
+  font-size: 12;
+  color: #333333;
+}

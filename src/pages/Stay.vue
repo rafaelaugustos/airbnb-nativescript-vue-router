@@ -1,17 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'nativescript-vue'
 import { Deferred, useNavigationFocus, useRouteData, useRouter } from 'vue-router-ns'
-import {
-  Dialogs,
-  Screen,
-  type EventData,
-  type Page,
-  type ScrollView,
-} from '@nativescript/core'
+import { Screen, type EventData, type Page, type ScrollView } from '@nativescript/core'
 import { stayData } from '../stay-data'
 import { usePageScroll } from '../utils/page-scroll'
 import { provideStayActions } from '../utils/stay-actions'
-import { stayTotal } from '../utils/stays'
+import { openDestination } from '../navigation'
 import StayGallery from '../components/StayGallery.vue'
 import StaySummary from '../components/StaySummary.vue'
 import StayDetails from '../components/StayDetails.vue'
@@ -44,11 +38,7 @@ function onScroll({ object }: EventData) {
 }
 function reserve() {
   if (!stay.value) return
-  Dialogs.alert({
-    title: 'Resumo da reserva',
-    message: `${stay.value.title}\n${stay.value.dates} · ${stay.value.nights ?? 5} noites\n${stayTotal(stay.value)} no total.\n\nEsta é uma acomodação fictícia do demo. Nenhuma reserva ou cobrança será feita.`,
-    okButtonText: 'Fechar',
-  })
+  void openDestination(`/trips/${stay.value.id}/reserve`, 'reservation')
 }
 </script>
 
