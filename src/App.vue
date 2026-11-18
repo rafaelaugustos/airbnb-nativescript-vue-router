@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import { saved, selectedTab } from './store'
+import { computed, watch } from 'nativescript-vue'
+import { confirmedTrips, invitationRead } from './travel-state'
+import { router } from './router'
+const tripCount = computed(() => confirmedTrips.value.length || undefined)
+watch(selectedTab, () => router.diagnostics?.checkpoint(), { flush: 'post' })
 </script>
 
 <template>
@@ -33,6 +38,7 @@ import { saved, selectedTab } from './store'
       title="Viagens"
       icon="suitcase.rolling"
       androidIcon="sys://ic_menu_myplaces"
+      :badge="tripCount"
     >
       <RouterView name="trips" initial="/trips" backToRootOnReselect />
     </RouterTab>
@@ -41,6 +47,7 @@ import { saved, selectedTab } from './store'
       title="Mensagens"
       icon="message"
       androidIcon="sys://ic_dialog_email"
+      :badge="invitationRead ? undefined : 1"
     >
       <RouterView name="messages" initial="/messages" backToRootOnReselect />
     </RouterTab>
